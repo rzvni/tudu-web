@@ -5,6 +5,7 @@ import { listWorkTodos } from "@/lib/api";
 import { searchTodos } from "@/lib/search";
 import { formatDue } from "@/lib/dueParser";
 import { logoutAction, toggleDoneAction } from "../actions";
+import { CommandPaletteLauncher } from "../CommandPaletteLauncher";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,8 @@ export default async function SearchPage({
             <button type="submit" className="linkbtn">Logout</button>
           </form>
         </header>
+
+        <CommandPaletteLauncher />
 
         <div className="search-head">
           <h1 className="search-query">{query || "—"}</h1>

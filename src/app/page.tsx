@@ -4,6 +4,7 @@ import { listWorkTodos } from "@/lib/api";
 import { logoutAction, toggleDoneAction } from "./actions";
 import { SpotlightLauncher } from "./SpotlightLauncher";
 import { SearchLauncher } from "./SearchLauncher";
+import { CommandPaletteLauncher } from "./CommandPaletteLauncher";
 import { formatDue } from "@/lib/dueParser";
 import "./spotlight.css";
 
@@ -36,6 +37,7 @@ export default async function HomePage() {
         <div className="launcher-row">
           <SpotlightLauncher customers={customers} people={people} />
           <SearchLauncher todos={todos} />
+          <CommandPaletteLauncher />
         </div>
 
         <ul className="list">
