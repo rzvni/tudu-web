@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
-import { createTodoAction, logoutAction, toggleDoneAction } from "./actions";
+import { logoutAction, toggleDoneAction } from "./actions";
+import { SpotlightLauncher } from "./SpotlightLauncher";
+import "./spotlight.css";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +13,13 @@ export default async function HomePage() {
   const todos = await listWorkTodos();
   const open = todos.filter((t) => !t.done);
   const done = todos.filter((t) => t.done);
+
+  const customers = Array.from(
+    new Set(todos.flatMap((t) => (t.subcategory ? [t.subcategory] : []))),
+  ).sort((a, b) => a.localeCompare(b));
+  const people = Array.from(new Set(todos.flatMap((t) => t.people))).sort((a, b) =>
+    a.localeCompare(b),
+  );
 
   return (
     <main className="shell">
@@ -22,17 +31,7 @@ export default async function HomePage() {
           </form>
         </header>
 
-        <form action={createTodoAction} className="form">
-          <input
-            name="title"
-            required
-            maxLength={200}
-            autoFocus
-            placeholder="Was steht an?"
-            className="input"
-          />
-          <button type="submit" className="btn">Add</button>
-        </form>
+        <SpotlightLauncher customers={customers} people={people} />
 
         <ul className="list">
           {open.length === 0 ? (
@@ -45,7 +44,17 @@ export default async function HomePage() {
                   <input type="hidden" name="done" value={String(t.done)} />
                   <button type="submit" aria-label="erledigt" className="check">○</button>
                 </form>
-                <span className="item-title">{t.title}</span>
+                <div className="item-body">
+                  <span className="item-title">{t.title}</span>
+                  {(t.subcategory || t.people.length > 0) ? (
+                    <span className="item-meta">
+                      {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
+                      {t.people.map((p) => (
+                        <span key={p} className="meta-person">{p}</span>
+                      ))}
+                    </span>
+                  ) : null}
+                </div>
               </li>
             ))
           )}
@@ -62,7 +71,17 @@ export default async function HomePage() {
                     <input type="hidden" name="done" value={String(t.done)} />
                     <button type="submit" aria-label="wiederherstellen" className="check">●</button>
                   </form>
-                  <span className="item-title">{t.title}</span>
+                  <div className="item-body">
+                    <span className="item-title">{t.title}</span>
+                    {(t.subcategory || t.people.length > 0) ? (
+                      <span className="item-meta">
+                        {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
+                        {t.people.map((p) => (
+                          <span key={p} className="meta-person">{p}</span>
+                        ))}
+                      </span>
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ul>

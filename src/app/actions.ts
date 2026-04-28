@@ -24,7 +24,20 @@ export async function createTodoAction(formData: FormData): Promise<void> {
   if (!(await isAuthenticated())) redirect("/login");
   const title = String(formData.get("title") ?? "").trim();
   if (!title) return;
-  await createWorkTodo(title);
+  const subcategory = String(formData.get("subcategory") ?? "").trim() || null;
+  const peopleRaw = formData.get("people");
+  let people: string[] = [];
+  if (typeof peopleRaw === "string" && peopleRaw) {
+    try {
+      const parsed = JSON.parse(peopleRaw);
+      if (Array.isArray(parsed)) {
+        people = parsed.filter((x): x is string => typeof x === "string" && x.trim().length > 0);
+      }
+    } catch {
+      // ignore malformed people payload — submit with title+subcategory
+    }
+  }
+  await createWorkTodo({ title, subcategory, people });
   revalidatePath("/");
 }
 

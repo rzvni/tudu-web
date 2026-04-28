@@ -149,12 +149,46 @@ html, body {
 
 .check:hover { opacity: 1; }
 
-.item-title { flex: 1; font-size: 16px; line-height: 1.35; }
+.item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.item-title { font-size: 16px; line-height: 1.35; }
+
+.item-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.meta-customer {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.meta-person {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--foreground) 14%, transparent);
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
 
 .item-done .item-title {
   text-decoration: line-through;
   opacity: 0.4;
 }
+
+.item-done .item-meta { opacity: 0.5; }
 
 .done-section {
   margin-top: 16px;
