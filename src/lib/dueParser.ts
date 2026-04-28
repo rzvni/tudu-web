@@ -88,3 +88,44 @@ export function isOverdue(d: Date, now: Date = new Date()): boolean {
   t.setHours(0, 0, 0, 0);
   return t.getTime() < today.getTime();
 }
+
+const WEEKDAYS_LONG = [
+  "Sonntag",
+  "Montag",
+  "Dienstag",
+  "Mittwoch",
+  "Donnerstag",
+  "Freitag",
+  "Samstag",
+];
+
+const MONTHS_LONG = [
+  "Januar",
+  "Februar",
+  "März",
+  "April",
+  "Mai",
+  "Juni",
+  "Juli",
+  "August",
+  "September",
+  "Oktober",
+  "November",
+  "Dezember",
+];
+
+export function formatDueLong(d: Date): string {
+  const now = new Date();
+  const sameYear = d.getFullYear() === now.getFullYear();
+  const base = `${WEEKDAYS_LONG[d.getDay()]}, ${d.getDate()}. ${MONTHS_LONG[d.getMonth()]}`;
+  return sameYear ? base : `${base} ${d.getFullYear()}`;
+}
+
+export function formatDueDetail(d: Date): string {
+  const rel = formatDue(d);
+  const abs = formatDueLong(d);
+  if (rel === "Heute" || rel === "Morgen" || rel === "Gestern") {
+    return `${rel} · ${abs}`;
+  }
+  return abs;
+}

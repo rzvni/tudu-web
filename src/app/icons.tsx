@@ -138,6 +138,28 @@ export function ArrowLeft({ size = 16, className }: IconProps) {
   );
 }
 
+export function Trash({ size = 16, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={STROKE}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M2.667 4h10.666" />
+      <path d="M5.333 4V2.667a1 1 0 0 1 1-1h3.334a1 1 0 0 1 1 1V4" />
+      <path d="M12.667 4 12 13a1.333 1.333 0 0 1-1.333 1.333H5.333A1.333 1.333 0 0 1 4 13L3.333 4" />
+      <path d="M6.667 7.333v4M9.333 7.333v4" />
+    </svg>
+  );
+}
+
 export function GearIcon({ size = 18, className }: IconProps) {
   return (
     <svg

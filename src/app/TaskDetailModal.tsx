@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import type { Todo } from "@/lib/api";
-import { formatDue, parseDueText, toDateInputValue } from "@/lib/dueParser";
-import { updateTodoAction } from "./actions";
-import { CalendarIcon, CloseIcon, Pencil } from "./icons";
+import { formatDue, formatDueDetail, parseDueText, toDateInputValue } from "@/lib/dueParser";
+import { deleteTodoAction, updateTodoAction } from "./actions";
+import { CalendarIcon, CheckIcon, CloseIcon, Pencil, Trash } from "./icons";
 
 export function TaskDetailModal({
   todo,
@@ -30,6 +30,7 @@ export function TaskDetailModal({
   const [dueText, setDueText] = useState("");
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [pending, startTransition] = useTransition();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const dateNativeRef = useRef<HTMLInputElement>(null);
@@ -37,6 +38,7 @@ export function TaskDetailModal({
   useEffect(() => {
     if (open && todo) {
       setEditing(false);
+      setConfirmDelete(false);
       setTitle(todo.title);
       setCustomer(todo.subcategory ?? "");
       setTaskPeople(todo.people);
@@ -58,7 +60,9 @@ export function TaskDetailModal({
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
-        if (editing) {
+        if (confirmDelete) {
+          setConfirmDelete(false);
+        } else if (editing) {
           setEditing(false);
         } else {
           onClose();
@@ -67,7 +71,7 @@ export function TaskDetailModal({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, editing, onClose]);
+  }, [open, editing, confirmDelete, onClose]);
 
   const filteredCustomers = useMemo(() => {
     const q = customer.trim().toLowerCase();
@@ -130,6 +134,18 @@ export function TaskDetailModal({
     });
   }
 
+  function executeDelete() {
+    if (!todo) return;
+    const fd = new FormData();
+    fd.set("id", todo.id);
+    startTransition(async () => {
+      await deleteTodoAction(fd);
+      setConfirmDelete(false);
+      setEditing(false);
+      onClose();
+    });
+  }
+
   return (
     <div
       className="sl-backdrop"
@@ -139,24 +155,31 @@ export function TaskDetailModal({
     >
       <div className="sl-modal task-detail" role="dialog" aria-modal="true">
         <header className="td-head">
-          {editing ? (
-            <input
-              ref={titleRef}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  save();
-                }
-              }}
-              className="td-title-input"
-              autoFocus
-              spellCheck={false}
-            />
-          ) : (
-            <h2 className="td-title">{todo.title}</h2>
-          )}
+          <div className="td-title-wrap">
+            {editing ? (
+              <input
+                ref={titleRef}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    save();
+                  }
+                }}
+                className="td-title-input"
+                autoFocus
+                spellCheck={false}
+              />
+            ) : (
+              <h2 className={`td-title ${todo.done ? "is-done" : ""}`}>{todo.title}</h2>
+            )}
+            {todo.done && !editing ? (
+              <span className="td-done-tag">
+                <CheckIcon size={12} /> Erledigt
+              </span>
+            ) : null}
+          </div>
           <div className="td-actions">
             {editing ? (
               <>
@@ -367,14 +390,46 @@ export function TaskDetailModal({
               />
             </div>
 
-            <div className="sl-hint">
-              <span>{pending ? "speichert…" : "⌘ Enter speichern"}</span>
-              <span>Esc abbrechen</span>
+            <div className="td-edit-foot">
+              {confirmDelete ? (
+                <div className="td-confirm">
+                  <span>Wirklich löschen?</span>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="td-btn-icon"
+                    disabled={pending}
+                  >
+                    <CloseIcon size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={executeDelete}
+                    className="td-btn-danger"
+                    disabled={pending}
+                  >
+                    {pending ? "…" : "Löschen"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="td-btn-ghost-danger"
+                  disabled={pending}
+                >
+                  <Trash size={14} /> Löschen
+                </button>
+              )}
+              <span className="sl-hint td-hint-inline">
+                <span>{pending ? "speichert…" : "⌘ Enter speichern"}</span>
+                <span>Esc abbrechen</span>
+              </span>
             </div>
           </div>
         ) : (
           <div className="td-view">
-            {todo.subcategory || todo.people.length > 0 || todo.dueDate ? (
+            {todo.subcategory || todo.people.length > 0 ? (
               <div className="td-meta">
                 {todo.subcategory ? (
                   <span className="meta-customer">{todo.subcategory}</span>
@@ -384,16 +439,26 @@ export function TaskDetailModal({
                     {p}
                   </span>
                 ))}
-                {todo.dueDate ? (
-                  <span className="meta-date">{formatDue(new Date(todo.dueDate))}</span>
-                ) : null}
+              </div>
+            ) : null}
+
+            {todo.dueDate ? (
+              <div className="td-due-row">
+                <CalendarIcon size={14} className="td-due-icon" />
+                <span className="td-due-text">{formatDueDetail(new Date(todo.dueDate))}</span>
               </div>
             ) : null}
 
             {todo.notes ? <div className="td-notes">{todo.notes}</div> : null}
 
             <div className="td-stamps">
-              <span>Erstellt {new Date(todo.createdAt).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" })}</span>
+              <span>
+                Erstellt{" "}
+                {new Date(todo.createdAt).toLocaleString("de-DE", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </span>
               {todo.doneAt ? (
                 <span>
                   Erledigt{" "}

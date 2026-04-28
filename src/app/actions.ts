@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { verifyTotp } from "@/lib/totp";
 import { createSession, destroySession, isAuthenticated } from "@/lib/session";
-import { createWorkTodo, setTodoDone, updateWorkTodo } from "@/lib/api";
+import { createWorkTodo, deleteWorkTodo, setTodoDone, updateWorkTodo } from "@/lib/api";
 
 export async function loginAction(_state: unknown, formData: FormData): Promise<{ error?: string }> {
   const code = String(formData.get("code") ?? "");
@@ -41,6 +41,9 @@ export async function createTodoAction(formData: FormData): Promise<void> {
   const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
   await createWorkTodo({ title, subcategory, people, dueDate });
   revalidatePath("/");
+  revalidatePath("/today");
+  revalidatePath("/search");
+  revalidatePath("/calendar");
 }
 
 export async function toggleDoneAction(formData: FormData): Promise<void> {
@@ -50,6 +53,9 @@ export async function toggleDoneAction(formData: FormData): Promise<void> {
   if (!id) return;
   await setTodoDone(id, !done);
   revalidatePath("/");
+  revalidatePath("/today");
+  revalidatePath("/search");
+  revalidatePath("/calendar");
 }
 
 export async function updateTodoAction(formData: FormData): Promise<void> {
@@ -77,6 +83,18 @@ export async function updateTodoAction(formData: FormData): Promise<void> {
   const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
   await updateWorkTodo(id, { title, subcategory, people, notes, dueDate });
   revalidatePath("/");
+  revalidatePath("/today");
+  revalidatePath("/search");
+  revalidatePath("/calendar");
+}
+
+export async function deleteTodoAction(formData: FormData): Promise<void> {
+  if (!(await isAuthenticated())) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  await deleteWorkTodo(id);
+  revalidatePath("/");
+  revalidatePath("/today");
   revalidatePath("/search");
   revalidatePath("/calendar");
 }

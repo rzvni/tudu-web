@@ -99,3 +99,10 @@ export async function updateWorkTodo(id: string, input: UpdateTodoInput): Promis
   });
   if (!res.ok) throw new Error(`PATCH /api/todos/${id} failed: ${res.status}`);
 }
+
+export async function deleteWorkTodo(id: string): Promise<void> {
+  const res = await api(`/api/todos/${id}`, { method: "DELETE" });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`DELETE /api/todos/${id} failed: ${res.status}`);
+  }
+}
