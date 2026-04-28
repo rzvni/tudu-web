@@ -5,7 +5,8 @@ import { listWorkTodos } from "@/lib/api";
 import { searchTodos } from "@/lib/search";
 import { formatDue } from "@/lib/dueParser";
 import { logoutAction, toggleDoneAction } from "../actions";
-import { CommandPaletteLauncher } from "../CommandPaletteLauncher";
+import { AppShell } from "../AppShell";
+import "../spotlight.css";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +21,15 @@ export default async function SearchPage({
 
   const todos = await listWorkTodos();
   const results = query ? searchTodos(todos, query) : [];
-  const open = results.filter((t) => !t.done);
-  const done = results.filter((t) => t.done);
+  const openResults = results.filter((t) => !t.done);
+  const doneResults = results.filter((t) => t.done);
+
+  const customers = Array.from(
+    new Set(todos.flatMap((t) => (t.subcategory ? [t.subcategory] : []))),
+  ).sort((a, b) => a.localeCompare(b));
+  const people = Array.from(new Set(todos.flatMap((t) => t.people))).sort((a, b) =>
+    a.localeCompare(b),
+  );
 
   return (
     <main className="shell">
@@ -35,30 +43,28 @@ export default async function SearchPage({
           </form>
         </header>
 
-        <CommandPaletteLauncher />
+        <AppShell todos={todos} customers={customers} people={people} />
 
         <div className="search-head">
           <h1 className="search-query">{query || "—"}</h1>
           <p className="search-count">
-            {results.length === 0
-              ? "Keine Treffer"
-              : `${results.length} ${results.length === 1 ? "Treffer" : "Treffer"}`}
+            {results.length === 0 ? "Keine Treffer" : `${results.length} Treffer`}
           </p>
         </div>
 
-        {open.length > 0 ? (
+        {openResults.length > 0 ? (
           <ul className="list">
-            {open.map((t) => (
+            {openResults.map((t) => (
               <TodoRow key={t.id} t={t} />
             ))}
           </ul>
         ) : null}
 
-        {done.length > 0 ? (
+        {doneResults.length > 0 ? (
           <details className="done-section" open>
-            <summary>Erledigt ({done.length})</summary>
+            <summary>Erledigt ({doneResults.length})</summary>
             <ul className="list">
-              {done.map((t) => (
+              {doneResults.map((t) => (
                 <TodoRow key={t.id} t={t} />
               ))}
             </ul>

@@ -2,9 +2,7 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
 import { logoutAction, toggleDoneAction } from "./actions";
-import { SpotlightLauncher } from "./SpotlightLauncher";
-import { SearchLauncher } from "./SearchLauncher";
-import { CommandPaletteLauncher } from "./CommandPaletteLauncher";
+import { AppShell } from "./AppShell";
 import { formatDue } from "@/lib/dueParser";
 import "./spotlight.css";
 
@@ -34,11 +32,7 @@ export default async function HomePage() {
           </form>
         </header>
 
-        <div className="launcher-row">
-          <SpotlightLauncher customers={customers} people={people} />
-          <SearchLauncher todos={todos} />
-          <CommandPaletteLauncher />
-        </div>
+        <AppShell todos={todos} customers={customers} people={people} />
 
         <ul className="list">
           {open.length === 0 ? (
