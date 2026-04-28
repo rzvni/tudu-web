@@ -720,3 +720,229 @@
   letter-spacing: -0.005em;
   margin-bottom: 6px;
 }
+
+/* Task detail modal */
+.task-detail {
+  max-width: 580px;
+}
+
+.td-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.td-title {
+  flex: 1;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--foreground);
+  word-break: break-word;
+}
+
+.td-title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  padding: 0;
+  font-family: inherit;
+}
+
+.td-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.td-btn-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: transparent;
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  transition: background 100ms, color 100ms, border-color 100ms;
+}
+
+.td-btn-icon:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--foreground) 18%, transparent);
+}
+
+.td-btn-icon:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.td-btn-primary {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.td-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.td-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.td-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.td-notes {
+  font-size: 14px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+  white-space: pre-wrap;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+}
+
+.td-stamps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11.5px;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  font-feature-settings: "tnum";
+  margin-top: 4px;
+}
+
+.td-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.td-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.td-row-notes {
+  align-items: stretch;
+}
+
+.td-label {
+  font-size: 12.5px;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  letter-spacing: 0.01em;
+  padding-top: 8px;
+}
+
+.td-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.td-input {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+  color: var(--foreground);
+  outline: none;
+  font-family: inherit;
+}
+
+.td-input:focus {
+  border-color: color-mix(in srgb, var(--foreground) 35%, transparent);
+}
+
+.td-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+  color: var(--foreground);
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 88px;
+}
+
+.td-textarea:focus {
+  border-color: color-mix(in srgb, var(--foreground) 35%, transparent);
+}
+
+.td-due {
+  flex-direction: row;
+  align-items: center;
+}
+
+.td-due .td-input {
+  flex: 1;
+}
+
+.td-suggest {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 4px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--foreground) 25%, transparent);
+}
+
+.td-suggest-item {
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  cursor: pointer;
+  color: var(--foreground);
+}
+
+.td-suggest-item.is-active {
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+}

@@ -6,6 +6,7 @@ import { searchTodos } from "@/lib/search";
 import { AppShell } from "../AppShell";
 import { SettingsMenu } from "../SettingsMenu";
 import { TaskRow } from "../TaskRow";
+import { ArrowLeft } from "../icons";
 import "../spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ export default async function SearchPage({
       <div className="card card-wide">
         <header className="header">
           <Link href="/" className="back-link" aria-label="zurück">
-            ← Zurück
+            <ArrowLeft size={14} /> Zurück
           </Link>
           <SettingsMenu />
         </header>

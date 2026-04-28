@@ -1,3 +1,5 @@
+"use client";
+
 import { formatDue, isOverdue } from "@/lib/dueParser";
 import type { Todo } from "@/lib/api";
 import { toggleDoneAction } from "./actions";
@@ -16,17 +18,24 @@ export function TaskRow({ t }: { t: Todo }) {
           {t.done ? "●" : "○"}
         </button>
       </form>
-      <div className="item-body">
+      <button
+        type="button"
+        className="item-body item-body-btn"
+        onClick={() => {
+          window.dispatchEvent(new CustomEvent<string>("task:open", { detail: t.id }));
+        }}
+        aria-label={`Task öffnen: ${t.title}`}
+      >
         <span className="item-title">{t.title}</span>
         <TaskMeta t={t} />
-      </div>
+      </button>
     </li>
   );
 }
 
 export function TaskMeta({ t }: { t: Todo }) {
   if (!t.subcategory && t.people.length === 0 && !t.dueDate) return null;
-  const overdue = t.dueDate && !t.done && isOverdue(new Date(t.dueDate));
+  const overdue = !!t.dueDate && !t.done && isOverdue(new Date(t.dueDate));
   return (
     <span className="item-meta">
       {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}

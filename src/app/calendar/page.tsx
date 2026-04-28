@@ -18,6 +18,7 @@ import {
 import { AppShell } from "../AppShell";
 import { SettingsMenu } from "../SettingsMenu";
 import { TaskRow } from "../TaskRow";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "../icons";
 import "../spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -79,7 +80,7 @@ export default async function CalendarPage({
       <div className="card card-wide">
         <header className="header">
           <Link href="/" className="back-link" aria-label="zurück">
-            ← Zurück
+            <ArrowLeft size={14} /> Zurück
           </Link>
           <SettingsMenu />
         </header>
@@ -88,11 +89,11 @@ export default async function CalendarPage({
 
         <div className="cal-head">
           <Link href={`/calendar?month=${prev}`} className="cal-nav" aria-label="Vormonat" scroll={false}>
-            ‹
+            <ChevronLeft size={18} />
           </Link>
           <h1 className="cal-title">{formatMonthTitle(monthStart)}</h1>
           <Link href={`/calendar?month=${next}`} className="cal-nav" aria-label="Nächster Monat" scroll={false}>
-            ›
+            <ChevronRight size={18} />
           </Link>
         </div>
 

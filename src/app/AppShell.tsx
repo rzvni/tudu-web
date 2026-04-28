@@ -6,6 +6,7 @@ import { SpotlightModal } from "./SpotlightModal";
 import { SearchModal } from "./SearchModal";
 import { CommandPalette, type Command } from "./CommandPalette";
 import { HideOverlay } from "./HideOverlay";
+import { TaskDetailModal } from "./TaskDetailModal";
 import type { Todo } from "@/lib/api";
 
 const CHORD_TIMEOUT_MS = 1500;
@@ -24,8 +25,20 @@ export function AppShell({
   const [palette, setPalette] = useState(false);
   const [hide, setHide] = useState(false);
   const [chord, setChord] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    function onOpen(e: Event) {
+      const id = (e as CustomEvent<string>).detail;
+      if (typeof id === "string") setDetailId(id);
+    }
+    window.addEventListener("task:open", onOpen);
+    return () => window.removeEventListener("task:open", onOpen);
+  }, []);
+
+  const detailTodo = detailId ? todos.find((t) => t.id === detailId) ?? null : null;
 
   const closeSpotlight = useCallback(() => setSpotlight(false), []);
   const closeSearch = useCallback(() => setSearch(false), []);
@@ -72,7 +85,7 @@ export function AppShell({
       }
 
       if (e.key === "Escape") {
-        if (spotlight || search || palette) return;
+        if (spotlight || search || palette || detailTodo) return;
         if (hide) {
           e.preventDefault();
           setHide(false);
@@ -115,7 +128,7 @@ export function AppShell({
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [chord, hide, spotlight, search, palette, pathname, router]);
+  }, [chord, hide, spotlight, search, palette, detailTodo, pathname, router]);
 
   const commands: Command[] = [
     {
@@ -177,6 +190,13 @@ export function AppShell({
       />
       <SearchModal open={search} onClose={closeSearch} todos={todos} />
       <CommandPalette open={palette} onClose={closePalette} commands={commands} />
+      <TaskDetailModal
+        open={!!detailTodo}
+        todo={detailTodo}
+        onClose={() => setDetailId(null)}
+        customers={customers}
+        people={people}
+      />
       {hide ? <HideOverlay /> : null}
     </>
   );

@@ -77,3 +77,25 @@ export async function setTodoDone(id: string, done: boolean): Promise<void> {
   });
   if (!res.ok) throw new Error(`PATCH /api/todos/${id} failed: ${res.status}`);
 }
+
+export type UpdateTodoInput = {
+  title?: string;
+  subcategory?: string | null;
+  people?: string[];
+  notes?: string | null;
+  dueDate?: Date | null;
+};
+
+export async function updateWorkTodo(id: string, input: UpdateTodoInput): Promise<void> {
+  const body: Record<string, unknown> = {};
+  if (input.title !== undefined) body.title = input.title;
+  if (input.subcategory !== undefined) body.subcategory = input.subcategory;
+  if (input.people !== undefined) body.people = input.people;
+  if (input.notes !== undefined) body.notes = input.notes;
+  if (input.dueDate !== undefined) body.dueDate = input.dueDate ? input.dueDate.toISOString() : null;
+  const res = await api(`/api/todos/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`PATCH /api/todos/${id} failed: ${res.status}`);
+}
