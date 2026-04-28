@@ -60,7 +60,7 @@ export function AppShell({
           if (k === "k" || k === "n") setSpotlight(true);
           else if (k === "s" || k === "o") setSearch(true);
           else if (k === "p") setPalette(true);
-          else if (k === "h") setHide(true);
+          else if (k === "h") setHide((prev) => !prev);
           return;
         }
         // any other key cancels chord

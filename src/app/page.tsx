@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
-import { logoutAction, toggleDoneAction } from "./actions";
+import { toggleDoneAction } from "./actions";
 import { AppShell } from "./AppShell";
+import { SettingsMenu } from "./SettingsMenu";
 import { formatDue } from "@/lib/dueParser";
 import "./spotlight.css";
 
@@ -27,9 +28,7 @@ export default async function HomePage() {
       <div className="card card-wide">
         <header className="header">
           <h1 className="title">tudu · work</h1>
-          <form action={logoutAction}>
-            <button type="submit" className="linkbtn">Logout</button>
-          </form>
+          <SettingsMenu />
         </header>
 
         <AppShell todos={todos} customers={customers} people={people} />

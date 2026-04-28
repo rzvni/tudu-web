@@ -4,8 +4,9 @@ import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
 import { searchTodos } from "@/lib/search";
 import { formatDue } from "@/lib/dueParser";
-import { logoutAction, toggleDoneAction } from "../actions";
+import { toggleDoneAction } from "../actions";
 import { AppShell } from "../AppShell";
+import { SettingsMenu } from "../SettingsMenu";
 import "../spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -38,9 +39,7 @@ export default async function SearchPage({
           <Link href="/" className="back-link" aria-label="zurück">
             ← Zurück
           </Link>
-          <form action={logoutAction}>
-            <button type="submit" className="linkbtn">Logout</button>
-          </form>
+          <SettingsMenu />
         </header>
 
         <AppShell todos={todos} customers={customers} people={people} />
