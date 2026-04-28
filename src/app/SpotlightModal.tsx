@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createTodoAction } from "./actions";
+import { formatDue, parseDueText, toDateInputValue } from "@/lib/dueParser";
 
 type Stage = "customer" | "task";
 
@@ -27,14 +28,19 @@ export function SpotlightModal({
   const [mentionStart, setMentionStart] = useState(0);
   const [mentionHighlighted, setMentionHighlighted] = useState(0);
 
+  const [dueText, setDueText] = useState("");
+  const [dueDate, setDueDate] = useState<Date | null>(null);
+
   const [pending, startTransition] = useTransition();
 
   const customerInputRef = useRef<HTMLInputElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const dueInputRef = useRef<HTMLInputElement>(null);
+  const dateNativeRef = useRef<HTMLInputElement>(null);
 
   const filteredCustomers = useMemo(() => {
     const q = customer.trim().toLowerCase();
-    if (!q) return customers;
+    if (!q) return [];
     return customers.filter((c) => c.toLowerCase().includes(q));
   }, [customer, customers]);
 
@@ -54,6 +60,8 @@ export function SpotlightModal({
     setMentionQuery("");
     setMentionStart(0);
     setMentionHighlighted(0);
+    setDueText("");
+    setDueDate(null);
   }
 
   useEffect(() => {
@@ -66,43 +74,36 @@ export function SpotlightModal({
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !mentionOpen) {
         e.preventDefault();
         onClose();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, mentionOpen]);
 
   function commitCustomer(value?: string) {
     const v = (value ?? customer).trim();
-    if (!v) {
-      setStage("task");
-      setCustomer("");
-    } else {
-      setCustomer(v);
-      setStage("task");
-    }
+    setCustomer(v);
+    setStage("task");
     requestAnimationFrame(() => titleInputRef.current?.focus());
   }
 
   function onCustomerKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "ArrowDown") {
+      if (filteredCustomers.length === 0) return;
       e.preventDefault();
       setHighlighted((h) => Math.min(h + 1, filteredCustomers.length - 1));
     } else if (e.key === "ArrowUp") {
+      if (filteredCustomers.length === 0) return;
       e.preventDefault();
       setHighlighted((h) => Math.max(h - 1, 0));
-    } else if (e.key === "Enter") {
+    } else if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
       const pick = filteredCustomers[highlighted];
       commitCustomer(pick ?? customer);
-    } else if (e.key === "Tab") {
-      e.preventDefault();
-      const pick = filteredCustomers[highlighted];
-      commitCustomer(pick ?? customer);
-    } else if (e.key === "Backspace" && customer === "" && stage === "customer") {
+    } else if (e.key === "Backspace" && customer === "") {
       onClose();
     }
   }
@@ -118,31 +119,30 @@ export function SpotlightModal({
     let i = pos - 1;
     while (i >= 0) {
       const ch = value[i];
-      if (ch === "@") break;
-      if (ch === " " || ch === "\n") {
+      if (ch === "\n") {
+        setMentionOpen(false);
+        return;
+      }
+      if (ch === "@") {
+        const before = i === 0 ? "" : value[i - 1];
+        if (before === "" || before === " " || before === "\n") {
+          const query = value.slice(i + 1, pos);
+          if (query.length > 50) {
+            setMentionOpen(false);
+            return;
+          }
+          setMentionStart(i);
+          setMentionQuery(query);
+          setMentionOpen(true);
+          setMentionHighlighted(0);
+          return;
+        }
         setMentionOpen(false);
         return;
       }
       i--;
     }
-    if (i < 0 || value[i] !== "@") {
-      setMentionOpen(false);
-      return;
-    }
-    const before = i === 0 ? "" : value[i - 1];
-    if (before && before !== " " && before !== "\n") {
-      setMentionOpen(false);
-      return;
-    }
-    const q = value.slice(i + 1, pos);
-    if (q.length > 30) {
-      setMentionOpen(false);
-      return;
-    }
-    setMentionStart(i);
-    setMentionQuery(q);
-    setMentionOpen(true);
-    setMentionHighlighted(0);
+    setMentionOpen(false);
   }
 
   function pickMention(name: string) {
@@ -168,6 +168,13 @@ export function SpotlightModal({
     setTaskPeople((prev) => prev.filter((p) => p !== name));
   }
 
+  function filteredPeopleWithNew(): string[] {
+    const q = mentionQuery.trim();
+    const exact = filteredPeople.find((p) => p.toLowerCase() === q.toLowerCase());
+    if (q && !exact) return [...filteredPeople, q];
+    return filteredPeople;
+  }
+
   function onTitleKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (mentionOpen) {
       const opts = filteredPeopleWithNew();
@@ -181,7 +188,7 @@ export function SpotlightModal({
         setMentionHighlighted((h) => Math.max(h - 1, 0));
         return;
       }
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
         const pick = opts[mentionHighlighted];
         if (pick) pickMention(pick);
@@ -198,18 +205,41 @@ export function SpotlightModal({
       submit();
       return;
     }
-    if (e.key === "Backspace" && title === "" && stage === "task") {
+    if (e.key === "Backspace" && title === "") {
       e.preventDefault();
       setStage("customer");
       requestAnimationFrame(() => customerInputRef.current?.focus());
     }
   }
 
-  function filteredPeopleWithNew(): string[] {
-    const q = mentionQuery.trim();
-    const exact = filteredPeople.find((p) => p.toLowerCase() === q.toLowerCase());
-    if (q && !exact) return [...filteredPeople, q];
-    return filteredPeople;
+  function onDueChange(text: string) {
+    setDueText(text);
+    setDueDate(parseDueText(text));
+  }
+
+  function onDueKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submit();
+    }
+  }
+
+  function onNativeDateChange(value: string) {
+    if (!value) {
+      setDueDate(null);
+      setDueText("");
+      return;
+    }
+    const [y, m, d] = value.split("-").map(Number);
+    const date = new Date(y, m - 1, d, 12, 0, 0);
+    setDueDate(date);
+    setDueText(formatDue(date));
+  }
+
+  function clearDue() {
+    setDueDate(null);
+    setDueText("");
+    requestAnimationFrame(() => dueInputRef.current?.focus());
   }
 
   function submit() {
@@ -218,6 +248,7 @@ export function SpotlightModal({
     formData.set("title", title.trim());
     formData.set("subcategory", customer.trim());
     formData.set("people", JSON.stringify(taskPeople));
+    formData.set("dueDate", dueDate ? dueDate.toISOString() : "");
     startTransition(async () => {
       await createTodoAction(formData);
       onClose();
@@ -315,6 +346,54 @@ export function SpotlightModal({
                 ))}
               </div>
             ) : null}
+
+            <div className="sl-due-row">
+              <input
+                ref={dueInputRef}
+                value={dueText}
+                onChange={(e) => onDueChange(e.target.value)}
+                onKeyDown={onDueKey}
+                placeholder="Frist · heute, morgen, diese woche, …"
+                className="sl-due-input"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              {dueDate ? (
+                <span className="sl-due-resolved">
+                  → {formatDue(dueDate)}
+                  <button
+                    type="button"
+                    onClick={clearDue}
+                    aria-label="Frist entfernen"
+                    className="sl-chip-x"
+                  >
+                    ×
+                  </button>
+                </span>
+              ) : null}
+              <input
+                ref={dateNativeRef}
+                type="date"
+                className="sl-date-native"
+                value={dueDate ? toDateInputValue(dueDate) : ""}
+                onChange={(e) => onNativeDateChange(e.target.value)}
+                tabIndex={-1}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const el = dateNativeRef.current;
+                  if (!el) return;
+                  if (typeof el.showPicker === "function") el.showPicker();
+                  else el.focus();
+                }}
+                className="sl-cal-icon"
+                aria-label="Datum auswählen"
+              >
+                <CalIcon />
+              </button>
+            </div>
+
             {mentionOpen && mentionOpts.length > 0 ? (
               <ul className="sl-suggestions">
                 {mentionOpts.map((p, i) => {
@@ -355,5 +434,16 @@ export function SpotlightModal({
         </div>
       </div>
     </div>
+  );
+}
+
+function CalIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="3" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+    </svg>
   );
 }

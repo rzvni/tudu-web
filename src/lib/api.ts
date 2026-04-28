@@ -53,6 +53,7 @@ export type CreateTodoInput = {
   title: string;
   subcategory?: string | null;
   people?: string[];
+  dueDate?: Date | null;
 };
 
 export async function createWorkTodo(input: CreateTodoInput): Promise<void> {
@@ -63,6 +64,7 @@ export async function createWorkTodo(input: CreateTodoInput): Promise<void> {
       category: WORK_CATEGORY,
       subcategory: input.subcategory ?? null,
       people: input.people ?? [],
+      dueDate: input.dueDate ? input.dueDate.toISOString() : null,
     }),
   });
   if (!res.ok) throw new Error(`POST /api/todos failed: ${res.status}`);

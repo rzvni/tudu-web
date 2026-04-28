@@ -119,6 +119,73 @@
   background: color-mix(in srgb, var(--foreground) 10%, transparent);
 }
 
+.sl-due-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.sl-due-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 4px 0;
+}
+
+.sl-due-input::placeholder {
+  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+}
+
+.sl-due-resolved {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-radius: 999px;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.sl-cal-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: transparent;
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  transition: background 100ms, color 100ms, border-color 100ms;
+}
+
+.sl-cal-icon:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--foreground) 18%, transparent);
+}
+
+.sl-date-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .sl-suggestions {
   list-style: none;
   margin: 14px -8px 4px;
@@ -192,4 +259,81 @@
   border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
   background: color-mix(in srgb, var(--foreground) 5%, transparent);
   color: color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+.launcher-row {
+  display: flex;
+  gap: 8px;
+}
+
+.launcher-secondary {
+  flex-shrink: 0;
+}
+
+.sl-result {
+  align-items: flex-start;
+  padding: 10px 12px;
+}
+
+.sl-result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sl-result-title {
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+.sl-result-title.is-done {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.sl-result-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
+
+.sl-result-customer {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+  font-weight: 500;
+}
+
+.sl-result-person {
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+.sl-result-date {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  font-feature-settings: "tnum";
+}
+
+.sl-empty-line {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  font-size: 13px;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+}
+
+.sl-more {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  letter-spacing: 0.01em;
 }

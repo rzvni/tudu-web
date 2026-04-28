@@ -3,6 +3,8 @@ import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
 import { logoutAction, toggleDoneAction } from "./actions";
 import { SpotlightLauncher } from "./SpotlightLauncher";
+import { SearchLauncher } from "./SearchLauncher";
+import { formatDue } from "@/lib/dueParser";
 import "./spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +33,10 @@ export default async function HomePage() {
           </form>
         </header>
 
-        <SpotlightLauncher customers={customers} people={people} />
+        <div className="launcher-row">
+          <SpotlightLauncher customers={customers} people={people} />
+          <SearchLauncher todos={todos} />
+        </div>
 
         <ul className="list">
           {open.length === 0 ? (
@@ -46,12 +51,13 @@ export default async function HomePage() {
                 </form>
                 <div className="item-body">
                   <span className="item-title">{t.title}</span>
-                  {(t.subcategory || t.people.length > 0) ? (
+                  {t.subcategory || t.people.length > 0 || t.dueDate ? (
                     <span className="item-meta">
                       {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
                       {t.people.map((p) => (
                         <span key={p} className="meta-person">{p}</span>
                       ))}
+                      {t.dueDate ? <span className="meta-date">{formatDue(new Date(t.dueDate))}</span> : null}
                     </span>
                   ) : null}
                 </div>
@@ -73,12 +79,13 @@ export default async function HomePage() {
                   </form>
                   <div className="item-body">
                     <span className="item-title">{t.title}</span>
-                    {(t.subcategory || t.people.length > 0) ? (
+                    {t.subcategory || t.people.length > 0 || t.dueDate ? (
                       <span className="item-meta">
                         {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
                         {t.people.map((p) => (
                           <span key={p} className="meta-person">{p}</span>
                         ))}
+                        {t.dueDate ? <span className="meta-date">{formatDue(new Date(t.dueDate))}</span> : null}
                       </span>
                     ) : null}
                   </div>

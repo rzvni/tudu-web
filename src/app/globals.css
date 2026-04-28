@@ -183,6 +183,45 @@ html, body {
   color: color-mix(in srgb, var(--foreground) 65%, transparent);
 }
 
+.meta-date {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  font-feature-settings: "tnum";
+}
+
+.search-head {
+  margin: 8px 0 4px;
+}
+
+.search-query {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.search-count {
+  font-size: 13px;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  margin-top: 2px;
+}
+
+.back-link {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 100ms;
+}
+
+.back-link:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+}
+
 .item-done .item-title {
   text-decoration: line-through;
   opacity: 0.4;

@@ -37,7 +37,9 @@ export async function createTodoAction(formData: FormData): Promise<void> {
       // ignore malformed people payload — submit with title+subcategory
     }
   }
-  await createWorkTodo({ title, subcategory, people });
+  const dueDateRaw = String(formData.get("dueDate") ?? "");
+  const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
+  await createWorkTodo({ title, subcategory, people, dueDate });
   revalidatePath("/");
 }
 
