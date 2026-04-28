@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos, type Todo } from "@/lib/api";
-import { formatDue } from "@/lib/dueParser";
 import {
   WEEKDAY_HEADERS,
   buildMonthGrid,
@@ -16,9 +15,9 @@ import {
   sameMonth,
   shiftMonth,
 } from "@/lib/calendar";
-import { toggleDoneAction } from "../actions";
 import { AppShell } from "../AppShell";
 import { SettingsMenu } from "../SettingsMenu";
+import { TaskRow } from "../TaskRow";
 import "../spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +38,7 @@ export default async function CalendarPage({
 
   const parsedDay = parseDayParam(dayParam);
   const selectedDay =
-    parsedDay && parsedDay.getMonth() === monthStart.getMonth() && parsedDay.getFullYear() === monthStart.getFullYear()
+    parsedDay && sameMonth(parsedDay, monthStart)
       ? parsedDay
       : sameMonth(monthStart, today)
       ? today
@@ -88,21 +87,11 @@ export default async function CalendarPage({
         <AppShell todos={todos} customers={customers} people={people} />
 
         <div className="cal-head">
-          <Link
-            href={`/calendar?month=${prev}`}
-            className="cal-nav"
-            aria-label="Vormonat"
-            scroll={false}
-          >
+          <Link href={`/calendar?month=${prev}`} className="cal-nav" aria-label="Vormonat" scroll={false}>
             ‹
           </Link>
           <h1 className="cal-title">{formatMonthTitle(monthStart)}</h1>
-          <Link
-            href={`/calendar?month=${next}`}
-            className="cal-nav"
-            aria-label="Nächster Monat"
-            scroll={false}
-          >
+          <Link href={`/calendar?month=${next}`} className="cal-nav" aria-label="Nächster Monat" scroll={false}>
             ›
           </Link>
         </div>
@@ -161,7 +150,7 @@ export default async function CalendarPage({
                 {openDayTodos.length > 0 ? (
                   <ul className="list">
                     {openDayTodos.map((t) => (
-                      <TodoRow key={t.id} t={t} />
+                      <TaskRow key={t.id} t={t} />
                     ))}
                   </ul>
                 ) : null}
@@ -170,7 +159,7 @@ export default async function CalendarPage({
                     <summary>Erledigt ({doneDayTodos.length})</summary>
                     <ul className="list">
                       {doneDayTodos.map((t) => (
-                        <TodoRow key={t.id} t={t} />
+                        <TaskRow key={t.id} t={t} />
                       ))}
                     </ul>
                   </details>
@@ -181,31 +170,5 @@ export default async function CalendarPage({
         ) : null}
       </div>
     </main>
-  );
-}
-
-function TodoRow({ t }: { t: Todo }) {
-  return (
-    <li className={`item ${t.done ? "item-done" : ""}`}>
-      <form action={toggleDoneAction} className="toggle">
-        <input type="hidden" name="id" value={t.id} />
-        <input type="hidden" name="done" value={String(t.done)} />
-        <button type="submit" aria-label={t.done ? "wiederherstellen" : "erledigt"} className="check">
-          {t.done ? "●" : "○"}
-        </button>
-      </form>
-      <div className="item-body">
-        <span className="item-title">{t.title}</span>
-        {t.subcategory || t.people.length > 0 || t.dueDate ? (
-          <span className="item-meta">
-            {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
-            {t.people.map((p) => (
-              <span key={p} className="meta-person">{p}</span>
-            ))}
-            {t.dueDate ? <span className="meta-date">{formatDue(new Date(t.dueDate))}</span> : null}
-          </span>
-        ) : null}
-      </div>
-    </li>
   );
 }

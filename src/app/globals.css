@@ -202,6 +202,22 @@ html, body {
   font-feature-settings: "tnum";
 }
 
+.meta-date.is-overdue {
+  border-color: color-mix(in srgb, #ef4444 32%, transparent);
+  color: #ef4444;
+  background: color-mix(in srgb, #ef4444 8%, transparent);
+}
+
+.meta-overdue {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 32%, transparent);
+  color: #ef4444;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+
 .search-head {
   margin: 8px 0 4px;
 }

@@ -118,6 +118,17 @@ export function AppShell({
   }, [chord, hide, spotlight, search, palette, pathname, router]);
 
   const commands: Command[] = [
+    {
+      id: "today",
+      label: "Heute",
+      description: "Heutiger Tag im Kalender",
+      action: () => {
+        const t = new Date();
+        const m = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}`;
+        const d = `${m}-${String(t.getDate()).padStart(2, "0")}`;
+        router.push(`/calendar?month=${m}&day=${d}`);
+      },
+    },
     { id: "calendar", label: "Kalender", description: "Tasks im Monatsraster", action: () => router.push("/calendar") },
     { id: "search", label: "Suchen", description: "Tasks finden", action: () => setSearch(true) },
     { id: "new", label: "Neuer Task", description: "Schnellerfassung öffnen", action: () => setSpotlight(true) },

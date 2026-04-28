@@ -324,6 +324,15 @@
   font-feature-settings: "tnum";
 }
 
+.sl-result-overdue {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 28%, transparent);
+  color: #ef4444;
+  font-weight: 500;
+}
+
 .sl-empty-line {
   margin-top: 14px;
   padding-top: 10px;

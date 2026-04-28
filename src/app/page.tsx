@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/session";
 import { listWorkTodos } from "@/lib/api";
-import { toggleDoneAction } from "./actions";
 import { AppShell } from "./AppShell";
 import { SettingsMenu } from "./SettingsMenu";
-import { formatDue } from "@/lib/dueParser";
+import { TaskRow } from "./TaskRow";
 import "./spotlight.css";
 
 export const dynamic = "force-dynamic";
@@ -37,27 +36,7 @@ export default async function HomePage() {
           {open.length === 0 ? (
             <li className="empty">Keine offenen Tasks.</li>
           ) : (
-            open.map((t) => (
-              <li key={t.id} className="item">
-                <form action={toggleDoneAction} className="toggle">
-                  <input type="hidden" name="id" value={t.id} />
-                  <input type="hidden" name="done" value={String(t.done)} />
-                  <button type="submit" aria-label="erledigt" className="check">○</button>
-                </form>
-                <div className="item-body">
-                  <span className="item-title">{t.title}</span>
-                  {t.subcategory || t.people.length > 0 || t.dueDate ? (
-                    <span className="item-meta">
-                      {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
-                      {t.people.map((p) => (
-                        <span key={p} className="meta-person">{p}</span>
-                      ))}
-                      {t.dueDate ? <span className="meta-date">{formatDue(new Date(t.dueDate))}</span> : null}
-                    </span>
-                  ) : null}
-                </div>
-              </li>
-            ))
+            open.map((t) => <TaskRow key={t.id} t={t} />)
           )}
         </ul>
 
@@ -66,25 +45,7 @@ export default async function HomePage() {
             <summary>Erledigt ({done.length})</summary>
             <ul className="list">
               {done.map((t) => (
-                <li key={t.id} className="item item-done">
-                  <form action={toggleDoneAction} className="toggle">
-                    <input type="hidden" name="id" value={t.id} />
-                    <input type="hidden" name="done" value={String(t.done)} />
-                    <button type="submit" aria-label="wiederherstellen" className="check">●</button>
-                  </form>
-                  <div className="item-body">
-                    <span className="item-title">{t.title}</span>
-                    {t.subcategory || t.people.length > 0 || t.dueDate ? (
-                      <span className="item-meta">
-                        {t.subcategory ? <span className="meta-customer">{t.subcategory}</span> : null}
-                        {t.people.map((p) => (
-                          <span key={p} className="meta-person">{p}</span>
-                        ))}
-                        {t.dueDate ? <span className="meta-date">{formatDue(new Date(t.dueDate))}</span> : null}
-                      </span>
-                    ) : null}
-                  </div>
-                </li>
+                <TaskRow key={t.id} t={t} />
               ))}
             </ul>
           </details>

@@ -80,3 +80,11 @@ export function toDateInputValue(d: Date): string {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
+
+export function isOverdue(d: Date, now: Date = new Date()): boolean {
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  const t = new Date(d);
+  t.setHours(0, 0, 0, 0);
+  return t.getTime() < today.getTime();
+}

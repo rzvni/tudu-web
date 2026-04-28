@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Todo } from "@/lib/api";
 import { searchTodos } from "@/lib/search";
-import { formatDue } from "@/lib/dueParser";
+import { formatDue, isOverdue } from "@/lib/dueParser";
 
 const MAX_INLINE = 6;
 
@@ -113,6 +113,9 @@ export function SearchModal({
                     {t.people.map((p) => (
                       <span key={p} className="sl-result-person">{p}</span>
                     ))}
+                    {t.dueDate && !t.done && isOverdue(new Date(t.dueDate)) ? (
+                      <span className="sl-result-overdue">Überfällig</span>
+                    ) : null}
                     {t.dueDate ? <span className="sl-result-date">{formatDue(new Date(t.dueDate))}</span> : null}
                   </div>
                 </div>
