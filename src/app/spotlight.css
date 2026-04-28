@@ -562,3 +562,152 @@
 .settings-toggle.is-on .settings-toggle-knob {
   transform: translateX(12px);
 }
+
+/* Calendar */
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 16px;
+}
+
+.cal-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--foreground);
+}
+
+.cal-nav {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 18px;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  text-decoration: none;
+  transition: background 100ms, color 100ms;
+}
+
+.cal-nav:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.cal-weekdays span {
+  font-size: 11px;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--foreground) 45%, transparent);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.cal-cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 4px 8px;
+  gap: 4px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-feature-settings: "tnum";
+  color: var(--foreground);
+  border: 1px solid transparent;
+  transition: background 90ms, border-color 90ms;
+}
+
+.cal-cell:hover {
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.cal-cell.is-other {
+  color: color-mix(in srgb, var(--foreground) 32%, transparent);
+}
+
+.cal-cell.is-today {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.cal-cell.is-today .cal-num {
+  font-weight: 600;
+}
+
+.cal-cell.is-selected {
+  border-color: color-mix(in srgb, var(--foreground) 35%, transparent);
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.cal-cell.is-today.is-selected {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.cal-cell.is-today.is-selected .cal-dot {
+  background: var(--background);
+}
+
+.cal-cell.is-today.is-selected .cal-dot.is-done {
+  background: color-mix(in srgb, var(--background) 60%, transparent);
+}
+
+.cal-num {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.cal-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 8px;
+}
+
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--foreground);
+}
+
+.cal-dot.is-done {
+  background: color-mix(in srgb, var(--foreground) 30%, transparent);
+}
+
+.cal-dot-more {
+  font-size: 10px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+.cal-day {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.cal-day-title {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin-bottom: 6px;
+}

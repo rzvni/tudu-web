@@ -118,9 +118,10 @@ export function AppShell({
   }, [chord, hide, spotlight, search, palette, pathname, router]);
 
   const commands: Command[] = [
-    { id: "hide", label: "Hide", description: "Bildschirm verstecken", action: () => setHide(true) },
+    { id: "calendar", label: "Kalender", description: "Tasks im Monatsraster", action: () => router.push("/calendar") },
     { id: "search", label: "Suchen", description: "Tasks finden", action: () => setSearch(true) },
     { id: "new", label: "Neuer Task", description: "Schnellerfassung öffnen", action: () => setSpotlight(true) },
+    { id: "hide", label: "Hide", description: "Bildschirm verstecken", action: () => setHide(true) },
   ];
 
   return (
