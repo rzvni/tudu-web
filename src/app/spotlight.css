@@ -441,10 +441,11 @@
   line-height: 1.2;
 }
 
-/* When user disables shortcuts in settings, hide all kbd hints */
-body.shortcuts-hidden .launcher-kbd,
-body.shortcuts-hidden .chord-hint,
-body.shortcuts-hidden .sl-hint {
+/* When user disables shortcuts in settings, hide launcher buttons + all kbd/hint affordances */
+.shortcuts-hidden .launcher-row,
+.shortcuts-hidden .launcher-kbd,
+.shortcuts-hidden .chord-hint,
+.shortcuts-hidden .sl-hint {
   display: none !important;
 }
 

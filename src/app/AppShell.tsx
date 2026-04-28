@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { SpotlightModal } from "./SpotlightModal";
 import { SearchModal } from "./SearchModal";
 import { CommandPalette, type Command } from "./CommandPalette";
@@ -23,6 +24,8 @@ export function AppShell({
   const [palette, setPalette] = useState(false);
   const [hide, setHide] = useState(false);
   const [chord, setChord] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const closeSpotlight = useCallback(() => setSpotlight(false), []);
   const closeSearch = useCallback(() => setSearch(false), []);
@@ -95,11 +98,24 @@ export function AppShell({
         setChord(true);
         return;
       }
+
+      if (
+        !cmd &&
+        !e.altKey &&
+        !e.shiftKey &&
+        e.key.toLowerCase() === "z" &&
+        !isInputFocused() &&
+        pathname !== "/"
+      ) {
+        e.preventDefault();
+        router.push("/");
+        return;
+      }
     }
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [chord, hide, spotlight, search, palette]);
+  }, [chord, hide, spotlight, search, palette, pathname, router]);
 
   const commands: Command[] = [
     { id: "hide", label: "Hide", description: "Bildschirm verstecken", action: () => setHide(true) },

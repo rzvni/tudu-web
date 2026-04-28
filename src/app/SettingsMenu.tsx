@@ -3,26 +3,44 @@
 import { useEffect, useRef, useState } from "react";
 import { logoutAction } from "./actions";
 
-const STORAGE_KEY = "tudu-show-shortcuts";
+const KEY_SHORTCUTS = "tudu-show-shortcuts";
+const KEY_THEME = "tudu-theme";
+
+type Theme = "light" | "dark";
+
+function detectInitialTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  const stored = localStorage.getItem(KEY_THEME);
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 export function SettingsMenu() {
   const [open, setOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(true);
+  const [theme, setTheme] = useState<Theme>("light");
   const [hydrated, setHydrated] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(KEY_SHORTCUTS);
     if (stored === "0") setShowShortcuts(false);
+    setTheme(detectInitialTheme());
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, showShortcuts ? "1" : "0");
-    document.body.classList.toggle("shortcuts-hidden", !showShortcuts);
+    localStorage.setItem(KEY_SHORTCUTS, showShortcuts ? "1" : "0");
+    document.documentElement.classList.toggle("shortcuts-hidden", !showShortcuts);
   }, [showShortcuts, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem(KEY_THEME, theme);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme, hydrated]);
 
   useEffect(() => {
     if (!open) return;
@@ -55,7 +73,20 @@ export function SettingsMenu() {
         <div className="settings-menu" role="menu">
           <button
             type="button"
-            role="menuitem"
+            role="menuitemcheckbox"
+            aria-checked={theme === "dark"}
+            className="settings-item"
+            onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+          >
+            <span>Dark Mode</span>
+            <span className={`settings-toggle ${theme === "dark" ? "is-on" : ""}`} aria-hidden="true">
+              <span className="settings-toggle-knob" />
+            </span>
+          </button>
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={showShortcuts}
             className="settings-item"
             onClick={() => setShowShortcuts((s) => !s)}
           >

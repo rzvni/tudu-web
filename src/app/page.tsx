@@ -27,7 +27,7 @@ export default async function HomePage() {
     <main className="shell">
       <div className="card card-wide">
         <header className="header">
-          <h1 className="title">tudu · work</h1>
+          <h1 className="title">tasks</h1>
           <SettingsMenu />
         </header>
 
