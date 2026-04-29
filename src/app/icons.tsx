@@ -138,6 +138,26 @@ export function ArrowLeft({ size = 16, className }: IconProps) {
   );
 }
 
+export function Flag({ size = 16, className, filled = false }: IconProps & { filled?: boolean }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={STROKE}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 14V2.667h7.333L10 4.667 10.333 6.667H13.333L13 8.667 13.333 10.667H6L5.667 8.667H3" />
+      <path d="M3 2.667v11.333" fill="none" stroke="currentColor" />
+    </svg>
+  );
+}
+
 export function Trash({ size = 16, className }: IconProps) {
   return (
     <svg

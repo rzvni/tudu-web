@@ -489,6 +489,13 @@
   color: var(--foreground);
 }
 
+/* Sort flagged items above others within a list */
+.list .item.is-flagged {
+  order: -1;
+}
+
+.list { display: flex; flex-direction: column; }
+
 .settings-menu {
   position: absolute;
   top: calc(100% + 6px);
@@ -817,6 +824,17 @@
 .td-btn-icon:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.td-btn-icon.is-flagged {
+  border-color: color-mix(in srgb, #ef4444 32%, transparent);
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  color: #ef4444;
+}
+
+.td-btn-icon.is-flagged:hover {
+  background: color-mix(in srgb, #ef4444 16%, transparent);
+  color: #ef4444;
 }
 
 .td-btn-primary {

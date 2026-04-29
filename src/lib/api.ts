@@ -8,6 +8,7 @@ export type Todo = {
   dueDate: string | null;
   notes: string | null;
   people: string[];
+  flagged: boolean;
   done: boolean;
   someday: boolean;
   doneAt: string | null;
@@ -46,7 +47,7 @@ export async function listWorkTodos(): Promise<Todo[]> {
   const data = (await res.json()) as { todos: Todo[] };
   return data.todos
     .filter((t) => t.category === WORK_CATEGORY)
-    .map((t) => ({ ...t, people: t.people ?? [] }));
+    .map((t) => ({ ...t, people: t.people ?? [], flagged: !!t.flagged }));
 }
 
 export type CreateTodoInput = {
@@ -84,6 +85,7 @@ export type UpdateTodoInput = {
   people?: string[];
   notes?: string | null;
   dueDate?: Date | null;
+  flagged?: boolean;
 };
 
 export async function updateWorkTodo(id: string, input: UpdateTodoInput): Promise<void> {
@@ -93,6 +95,7 @@ export async function updateWorkTodo(id: string, input: UpdateTodoInput): Promis
   if (input.people !== undefined) body.people = input.people;
   if (input.notes !== undefined) body.notes = input.notes;
   if (input.dueDate !== undefined) body.dueDate = input.dueDate ? input.dueDate.toISOString() : null;
+  if (input.flagged !== undefined) body.flagged = input.flagged;
   const res = await api(`/api/todos/${id}`, {
     method: "PATCH",
     body: JSON.stringify(body),

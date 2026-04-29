@@ -3,10 +3,11 @@
 import { formatDue, isOverdue } from "@/lib/dueParser";
 import type { Todo } from "@/lib/api";
 import { toggleDoneAction } from "./actions";
+import { Flag } from "./icons";
 
 export function TaskRow({ t }: { t: Todo }) {
   return (
-    <li className={`item ${t.done ? "item-done" : ""}`}>
+    <li className={`item ${t.done ? "item-done" : ""} ${t.flagged ? "is-flagged" : ""}`}>
       <form action={toggleDoneAction} className="toggle">
         <input type="hidden" name="id" value={t.id} />
         <input type="hidden" name="done" value={String(t.done)} />
@@ -26,7 +27,10 @@ export function TaskRow({ t }: { t: Todo }) {
         }}
         aria-label={`Task öffnen: ${t.title}`}
       >
-        <span className="item-title">{t.title}</span>
+        <span className="item-title-row">
+          {t.flagged ? <Flag size={12} filled className="item-flag" /> : null}
+          <span className="item-title">{t.title}</span>
+        </span>
         <TaskMeta t={t} />
       </button>
     </li>

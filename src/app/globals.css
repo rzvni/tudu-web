@@ -169,6 +169,18 @@ html, body {
 
 .item-title { font-size: 16px; line-height: 1.35; }
 
+.item-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.item-flag {
+  color: #ef4444;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 .item-meta {
   display: inline-flex;
   flex-wrap: wrap;

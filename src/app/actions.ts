@@ -88,6 +88,18 @@ export async function updateTodoAction(formData: FormData): Promise<void> {
   revalidatePath("/calendar");
 }
 
+export async function toggleFlagAction(formData: FormData): Promise<void> {
+  if (!(await isAuthenticated())) redirect("/login");
+  const id = String(formData.get("id") ?? "");
+  const flagged = formData.get("flagged") === "true";
+  if (!id) return;
+  await updateWorkTodo(id, { flagged: !flagged });
+  revalidatePath("/");
+  revalidatePath("/today");
+  revalidatePath("/search");
+  revalidatePath("/calendar");
+}
+
 export async function deleteTodoAction(formData: FormData): Promise<void> {
   if (!(await isAuthenticated())) redirect("/login");
   const id = String(formData.get("id") ?? "");

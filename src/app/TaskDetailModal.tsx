@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import type { Todo } from "@/lib/api";
 import { formatDue, formatDueDetail, parseDueText, toDateInputValue } from "@/lib/dueParser";
-import { deleteTodoAction, updateTodoAction } from "./actions";
-import { CalendarIcon, CheckIcon, CloseIcon, Pencil, Trash } from "./icons";
+import { deleteTodoAction, toggleFlagAction, updateTodoAction } from "./actions";
+import { CalendarIcon, CheckIcon, CloseIcon, Flag, Pencil, Trash } from "./icons";
 
 export function TaskDetailModal({
   todo,
@@ -146,6 +146,16 @@ export function TaskDetailModal({
     });
   }
 
+  function toggleFlag() {
+    if (!todo) return;
+    const fd = new FormData();
+    fd.set("id", todo.id);
+    fd.set("flagged", String(todo.flagged));
+    startTransition(async () => {
+      await toggleFlagAction(fd);
+    });
+  }
+
   return (
     <div
       className="sl-backdrop"
@@ -202,17 +212,29 @@ export function TaskDetailModal({
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(true);
-                  requestAnimationFrame(() => titleRef.current?.focus());
-                }}
-                className="td-btn-icon"
-                aria-label="Bearbeiten"
-              >
-                <Pencil size={16} />
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={toggleFlag}
+                  className={`td-btn-icon ${todo.flagged ? "is-flagged" : ""}`}
+                  aria-label={todo.flagged ? "Flagge entfernen" : "Flaggen"}
+                  aria-pressed={todo.flagged}
+                  disabled={pending}
+                >
+                  <Flag size={16} filled={todo.flagged} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditing(true);
+                    requestAnimationFrame(() => titleRef.current?.focus());
+                  }}
+                  className="td-btn-icon"
+                  aria-label="Bearbeiten"
+                >
+                  <Pencil size={16} />
+                </button>
+              </>
             )}
           </div>
         </header>
